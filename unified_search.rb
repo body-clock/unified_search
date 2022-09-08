@@ -3,7 +3,7 @@ require 'json'
 require 'pry'
 
 # initial variable setup
-search_query = 'patrick'
+search_query = 'book of hours'
 colenda_url = "https://colenda.library.upenn.edu/?utf8=%E2%9C%93&search_field=all_fields&format=json&q=#{search_query}"
 finding_aids_url = "https://findingaids.library.upenn.edu/records?f[record_source][]=upenn&format=json&q=#{search_query}"
 
@@ -31,12 +31,12 @@ end
 colenda_constructed_hash = {}
 colenda_response_items.each do |r|
   colenda_constructed_hash[r["id"]] = {
-    title: r["title_tesim"], # keep it as an array, don't want to lose information and have different data types
-    subjects: r["subject_tesim"],
+    title:    r["title_tesim"].nil? ? "" : r["title_tesim"], # keep it as an array, don't want to lose information and have different data types
+    subjects: r["subject_tesim"].nil? ? "" : r["subject_tesim"],
     abstract: r["abstract_tesim"].nil? ? "" : r["abstract_tesim"], # some values are nil - we want to have only strings
-    date: extract_date(r["date_tesim"].join ", "),
-    link: "https://colenda.library.upenn.edu/catalog/#{r["id"]}",
-    source: "Colenda"
+    date:     r["date_tesim"].nil? ? "" : extract_date(r["date_tesim"].join ", "),
+    link:     "https://colenda.library.upenn.edu/catalog/#{r["id"]}",
+    source:   "Colenda"
   }
 end
 
@@ -48,12 +48,12 @@ finding_aids_response_items = finding_aids_response["data"]
 finding_aids_constructed_hash = {}
 finding_aids_response_items.each do |r|
   finding_aids_constructed_hash[r["id"]] = {
-    title: [r["attributes"]["title_tsi"]["attributes"]["value"]],
-    subjects: [r["attributes"]["subjects_ssim"]["attributes"]["value"]],
-    abstract: [r["attributes"]["abstract_scope_contents_tsi"]["attributes"]["value"]],
-    date: extract_date(r["attributes"]["display_date_ssim"]["attributes"]["value"]),
-    link: r["attributes"]["title_tsi"]["id"],
-    source: 'Finding Aids'
+    title:    r["attributes"]["title_tsi"].nil? ? "" : [r["attributes"]["title_tsi"]["attributes"]["value"]],
+    subjects: r["attributes"]["subjects_ssim"].nil? ? "" : [r["attributes"]["subjects_ssim"]["attributes"]["value"]],
+    abstract: r["attributes"]["abstract_scope_contents_tsi"].nil? ? "" : [r["attributes"]["abstract_scope_contents_tsi"]["attributes"]["value"]],
+    date:     r["attributes"]["display_date_ssim"].nil? ? "" : extract_date(r["attributes"]["display_date_ssim"]["attributes"]["value"]),
+    link:     r["attributes"]["title_tsi"]["id"],
+    source:   'Finding Aids'
   }
 end
 
