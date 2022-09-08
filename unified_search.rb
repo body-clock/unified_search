@@ -3,7 +3,8 @@ require 'json'
 require 'pry'
 
 # initial variable setup
-search_query = 'book of hours'
+puts "Enter your search query: "
+search_query = gets.chomp
 colenda_url = "https://colenda.library.upenn.edu/?utf8=%E2%9C%93&search_field=all_fields&format=json&q=#{search_query}"
 finding_aids_url = "https://findingaids.library.upenn.edu/records?f[record_source][]=upenn&format=json&q=#{search_query}"
 
@@ -58,4 +59,5 @@ finding_aids_response_items.each do |r|
 end
 
 # return combined json data for consumption by front end app
-puts JSON.pretty_generate colenda_constructed_hash.merge(finding_aids_constructed_hash)
+final_response = colenda_constructed_hash.merge(finding_aids_constructed_hash)
+puts JSON.pretty_generate final_response
