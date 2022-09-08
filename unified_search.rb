@@ -59,5 +59,5 @@ finding_aids_response_items.each do |r|
 end
 
 # return combined json data for consumption by front end app
-final_response = colenda_constructed_hash.merge(finding_aids_constructed_hash).sort_by {|k, v| v[:date]}.to_h
+final_response = colenda_constructed_hash.merge(finding_aids_constructed_hash).sort_by {|k, v| v[:date]}.reverse.to_h
 puts JSON.pretty_generate final_response
