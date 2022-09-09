@@ -1,6 +1,5 @@
 require 'net/http'
 require 'json'
-require 'pry'
 
 # initial variable setup
 puts "Enter your search query: "
@@ -19,10 +18,12 @@ finding_aids_response = JSON.parse Net::HTTP.get(finding_aids_uri)
 # grab relevant search result data from colenda
 colenda_response_items = colenda_response["response"]["docs"]
 
+# extract the earliest year that appears in the input date string
 def extract_date date_string
   date_array = date_string.split(/[\s,-]/)
   date_int_array = []
   date_array.each do |d|
+    # we assume here that we don't have any results with a year value that is less than 100
     date_int_array << d.to_i unless d.to_i < 100
   end
   date_int_array.min
@@ -45,7 +46,7 @@ end
 finding_aids_response_items = finding_aids_response["data"]
 
 # create empty hash, iterate through finding aids search result data, and add extracted data into hash
-# these values must be converted to arrays in order to preserve the arrays in colenda data
+# these values must be converted to arrays in order to preserve the array data type in the colenda data
 finding_aids_constructed_hash = {}
 finding_aids_response_items.each do |r|
   finding_aids_constructed_hash[r["id"]] = {
