@@ -31,4 +31,28 @@ end
 
 I start by taking the input date string and splitting it into an array using spaces and dashes as delimiters. I then loop through that array and add values that are greater than 100 to a new array. I assume here that we do not have any items in our search that have a date before 100. Finally, I take the minimum value of that final array to ensure we get the earliest year that occurs in the input date field.
 
-Another assumption that I make is that fields like `title_tesim` and `title_ssim` will always be the same in Colenda. I’ve defaulted to using data from the `tesim` field because it occurs first. In the event that these values are different, we could potentially miss out on important data. A next step to improve the safety of this part of the response would be to get both values, compare them, return the field if they are the same, and combine them into a single string if they are different. In my evaluation of the available data, I didn’t find any values in these similar fields that were different.
+Another assumption that I make is that fields like `title_tesim` and `title_ssim` will always be the same. I’ve defaulted to using data from the `tesim` field because it occurs first. In the event that these values are different, we could potentially miss out on important data. A next step to improve the safety of this part of the response would be to get both values, compare them, return the field if they are the same, and combine them into a single string if they are different. In my experience, I didn’t find any values in these similar fields that were different.
+
+The final complication that I faced was the data types of the data returned from the original GET requests. Let’s take a look at the `Subjects` part of the response. From Colenda, I get an array of all subjects attached to the record:
+
+```json
+"subjects": [
+      "Manuscripts, Latin -- 16th century.",
+      "Books of hours.",
+      "Devotional calendars.",
+      "Codices (bound manuscripts)",
+      "Manuscripts, Italian -- 16th century.",
+      "Manuscripts, Renaissance.",
+      "Prayers and devotions.",
+      "Prayers.",
+      "Devotional literature."
+    ]
+```
+
+A similar record in Finding Aids might look like this:
+
+```json
+"subjects": "Authors, Business, Illustrators, and Artists"
+```
+
+The former is an array of multiple values, while the latter is just a string that reads much more like a sentence. Since Colenda gave me an array, I chose to add the single Finding Aids string values into arrays before returning JSON for the sake of consistency. If I wanted to take it further, I could split the Finding Aids data on commas to mimic the structure of the Colenda array. However, we enter territory here where we are making decisions about the nature and structure of the data. As a fairly high level script, I believe it’s important to preserve the integrity of the data as it exists in the original response.
